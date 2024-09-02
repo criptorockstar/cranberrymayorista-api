@@ -7,10 +7,12 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Color } from './color.entity';
 import { Size } from './size.entity';
 import { Category } from './category.entity';
+import { ProductImage } from './image.entity';
 
 @Entity('products')
 export class ProductEntity {
@@ -22,9 +24,6 @@ export class ProductEntity {
 
   @Column()
   slug: string;
-
-  @Column()
-  image: string;
 
   @Column()
   description: string;
@@ -64,6 +63,9 @@ export class ProductEntity {
     inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
   })
   categories: Category[];
+
+  @OneToMany(() => ProductImage, (image) => image.product)
+  images: ProductImage[];
 
   @CreateDateColumn()
   createdAt: Timestamp;

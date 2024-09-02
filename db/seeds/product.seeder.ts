@@ -5,6 +5,7 @@ import { ProductEntity } from '../../src/modules/products/entities/product.entit
 import { Color } from '../../src/modules/products/entities/color.entity';
 import { Size } from '../../src/modules/products/entities/size.entity';
 import { Category } from '../../src/modules/products/entities/category.entity';
+import { ProductImage } from '../../src/modules/products/entities/image.entity';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -20,6 +21,8 @@ export class ProductSeeder implements OnModuleInit {
     private readonly sizeRepository: Repository<Size>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
     private readonly configService: ConfigService,
   ) {
     this.apiUrl = this.configService.get<string>('API_URL');
@@ -51,7 +54,6 @@ export class ProductSeeder implements OnModuleInit {
       {
         name: 'Vestido de verano',
         slug: this.slugify('Vestido de verano'),
-        image: `${this.apiUrl}/files/${this.slugify('Vestido de verano')}.png`,
         description: 'Un hermoso vestido de verano.',
         stock: 50,
         price: 29.99,
@@ -59,11 +61,14 @@ export class ProductSeeder implements OnModuleInit {
         colors: [colors[0], colors[1]],
         sizes: [sizes[0], sizes[1]],
         categories: [categories[0], categories[1]],
+        images: [
+          `${this.apiUrl}/files/vestido-de-verano-1.jpg`,
+          `${this.apiUrl}/files/vestido-de-verano-2.jpg`,
+        ],
       },
       {
         name: 'Camisa de cuadros',
         slug: this.slugify('Camisa de cuadros'),
-        image: `${this.apiUrl}/files/${this.slugify('Camisa de cuadros')}.png`,
         description: 'Camisa de cuadros elegante.',
         stock: 100,
         price: 19.99,
@@ -71,11 +76,14 @@ export class ProductSeeder implements OnModuleInit {
         colors: [colors[2], colors[3]],
         sizes: [sizes[2], sizes[3]],
         categories: [categories[2], categories[3]],
+        images: [
+          `${this.apiUrl}/files/camisa-de-cuadros-1.jpg`,
+          `${this.apiUrl}/files/camisa-de-cuadros-2.jpg`,
+        ],
       },
       {
         name: 'Chaqueta de cuero',
         slug: this.slugify('Chaqueta de cuero'),
-        image: `${this.apiUrl}/files/${this.slugify('Chaqueta de cuero')}.png`,
         description: 'Chaqueta de cuero de alta calidad.',
         stock: 30,
         price: 99.99,
@@ -83,12 +91,12 @@ export class ProductSeeder implements OnModuleInit {
         colors: [colors[4]],
         sizes: [sizes[0]],
         categories: [categories[4]],
+        images: [`${this.apiUrl}/files/chaqueta-de-cuero-1.jpg`],
         featured: true,
       },
       {
         name: 'Abrigo de lana',
         slug: this.slugify('Abrigo de lana'),
-        image: `${this.apiUrl}/files/${this.slugify('Abrigo de lana')}.png`,
         description: 'Abrigo de lana cálido y cómodo.',
         stock: 20,
         price: 129.99,
@@ -96,12 +104,15 @@ export class ProductSeeder implements OnModuleInit {
         colors: [colors[5]],
         sizes: [sizes[1]],
         categories: [categories[5]],
+        images: [
+          `${this.apiUrl}/files/abrigo-de-lana-1.jpg`,
+          `${this.apiUrl}/files/abrigo-de-lana-2.jpg`,
+        ],
         featured: true,
       },
       {
         name: 'Pantalones deportivos',
         slug: this.slugify('Pantalones deportivos'),
-        image: `${this.apiUrl}/files/${this.slugify('Pantalones deportivos')}.png`,
         description: 'Pantalones deportivos para entrenamiento.',
         stock: 60,
         price: 39.99,
@@ -109,12 +120,15 @@ export class ProductSeeder implements OnModuleInit {
         colors: [colors[6]],
         sizes: [sizes[2]],
         categories: [categories[6]],
+        images: [
+          `${this.apiUrl}/files/pantalones-deportivos-1.jpg`,
+          `${this.apiUrl}/files/pantalones-deportivos-2.jpg`,
+        ],
         featured: true,
       },
       {
         name: 'Jersey de lana',
         slug: this.slugify('Jersey de lana'),
-        image: `${this.apiUrl}/files/${this.slugify('Jersey de lana')}.png`,
         description: 'Jersey de lana suave y cálido.',
         stock: 40,
         price: 49.99,
@@ -122,12 +136,41 @@ export class ProductSeeder implements OnModuleInit {
         colors: [colors[7]],
         sizes: [sizes[3]],
         categories: [categories[7]],
+        images: [
+          `${this.apiUrl}/files/jersey-de-lana-1.jpg`,
+          `${this.apiUrl}/files/jersey-de-lana-2.jpg`,
+        ],
         featured: true,
       },
     ];
 
-    await this.productRepository.save(products);
-    console.log('Productos insertados');
+    for (const productData of products) {
+      const product = this.productRepository.create({
+        name: productData.name,
+        slug: productData.slug,
+        description: productData.description,
+        stock: productData.stock,
+        price: productData.price,
+        discount: productData.discount,
+        colors: productData.colors,
+        sizes: productData.sizes,
+        categories: productData.categories,
+        featured: productData.featured || false,
+      });
+
+      await this.productRepository.save(product);
+
+      // Crear imágenes relacionadas para el producto
+      for (const imageUrl of productData.images) {
+        const image = this.productImageRepository.create({
+          url: imageUrl,
+          product: product,
+        });
+        await this.productImageRepository.save(image);
+      }
+    }
+
+    console.log('Productos insertados con imágenes');
   }
 
   slugify(text: string): string {

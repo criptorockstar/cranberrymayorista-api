@@ -8,9 +8,18 @@ import { ProductEntity } from '../src/modules/products/entities/product.entity';
 import { Category } from '../src/modules/products/entities/category.entity';
 import { Color } from '../src/modules/products/entities/color.entity';
 import { Size } from '../src/modules/products/entities/size.entity';
+import { ProductImage } from 'src/modules/products/entities/image.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductEntity, Color, Size, Category])],
+  imports: [
+    TypeOrmModule.forFeature([
+      ProductEntity,
+      Color,
+      Size,
+      Category,
+      ProductImage,
+    ]),
+  ],
   providers: [CategorySeeder, ColorSeeder, SizeSeeder, ProductSeeder],
 })
 export class SeedersModule implements OnModuleInit {

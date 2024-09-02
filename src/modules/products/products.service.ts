@@ -5,6 +5,7 @@ import { ProductEntity } from './entities/product.entity';
 import { Category } from './entities/category.entity';
 import { Color } from './entities/color.entity';
 import { Size } from './entities/size.entity';
+import { ProductImage } from './entities/image.entity';
 
 @Injectable()
 export class ProductsService {
@@ -20,7 +21,9 @@ export class ProductsService {
   ) {}
 
   async findAll() {
-    return this.productRepository.find();
+    return this.productRepository.find({
+      relations: ['images', 'colors', 'sizes', 'categories'],
+    });
   }
 
   async findAllCategories() {
