@@ -40,6 +40,7 @@ export class CategorySeeder implements OnModuleInit {
       'Chaquetas de punto',
     ].map((name) => ({
       name,
+      slug: this.slugify(name),
       image: `${this.apiUrl}/files/${this.slugify(name)}.png`,
     }));
 

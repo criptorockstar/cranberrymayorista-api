@@ -21,18 +21,7 @@ export class SizeSeeder implements OnModuleInit {
       return;
     }
 
-    const sizes = [
-      'XS',
-      'S',
-      'M',
-      'L',
-      'XL',
-      'XXL',
-      'XXXL',
-      '4XL',
-      '5XL',
-      '6XL',
-    ].map((name) => ({
+    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map((name) => ({
       name,
     }));
 

@@ -10,6 +10,9 @@ export class Category {
   name: string;
 
   @Column()
+  slug: string;
+
+  @Column()
   image: string;
 
   @ManyToMany(() => ProductEntity, (product) => product.categories)
