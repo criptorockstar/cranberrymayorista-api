@@ -121,8 +121,8 @@ export class ProductSeeder implements OnModuleInit {
         sizes: [sizes[2]],
         categories: [categories[6]],
         images: [
-          `${this.apiUrl}/files/pantalones-deportivos-1.jpg`,
-          `${this.apiUrl}/files/pantalones-deportivos-2.jpg`,
+          `${this.apiUrl}/files/vestido-de-verano-2.jpg`,
+          `${this.apiUrl}/files/vestido-de-verano-2.jpg`,
         ],
         featured: true,
       },

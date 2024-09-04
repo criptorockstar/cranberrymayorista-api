@@ -21,20 +21,19 @@ export class ColorSeeder implements OnModuleInit {
       return;
     }
 
+    // Define colors with their corresponding hex codes
     const colors = [
-      'Rojo',
-      'Verde',
-      'Azul',
-      'Amarillo',
-      'Negro',
-      'Blanco',
-      'Gris',
-      'Naranja',
-      'Marrón',
-      'Rosa',
-    ].map((name) => ({
-      name,
-    }));
+      { name: 'Rojo', code: '#FF0000' },
+      { name: 'Verde', code: '#00FF00' },
+      { name: 'Azul', code: '#0000FF' },
+      { name: 'Amarillo', code: '#FFFF00' },
+      { name: 'Negro', code: '#000000' },
+      { name: 'Blanco', code: '#FFFFFF' },
+      { name: 'Gris', code: '#808080' },
+      { name: 'Naranja', code: '#FFA500' },
+      { name: 'Marrón', code: '#A52A2A' },
+      { name: 'Rosa', code: '#FFC0CB' },
+    ];
 
     await this.colorRepository.save(colors);
     console.log('Colores insertados');

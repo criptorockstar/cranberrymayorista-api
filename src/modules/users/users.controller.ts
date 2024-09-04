@@ -58,6 +58,7 @@ export class UsersController {
     refreshToken: string;
   }> {
     const user = await this.usersService.signin(loginUserDto);
+
     const accessToken = await this.usersService.accessToken(user);
     const refreshToken = await this.usersService.refreshToken(user);
 
@@ -101,5 +102,11 @@ export class UsersController {
     const result = await this.usersService.resetPassword(token, password);
 
     return result;
+  }
+
+  @UseGuards(AuthenticationGuard)
+  @Get('/verify-token')
+  async veryfyToken(@CurrentUser() currentUser: UserEntity) {
+    return currentUser;
   }
 }

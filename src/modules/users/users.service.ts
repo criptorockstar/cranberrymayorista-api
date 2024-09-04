@@ -142,9 +142,7 @@ export class UsersService {
       .where('users.email=:email', { email: loginUserDto.email })
       .getOne();
     if (!userExists)
-      throw new BadRequestException(
-        'password: * Las credenciales son incorrectas',
-      );
+      throw new BadRequestException('password: * Usuario no registrado');
     const match = await compare(loginUserDto.password, userExists.password);
     if (!match)
       throw new BadRequestException(

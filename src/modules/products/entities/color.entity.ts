@@ -9,6 +9,9 @@ export class Color {
   @Column()
   name: string;
 
+  @Column()
+  code: string;
+
   @ManyToMany(() => ProductEntity, (product) => product.colors)
   products: ProductEntity[];
 }

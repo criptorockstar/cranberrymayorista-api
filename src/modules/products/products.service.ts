@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { Category } from './entities/category.entity';
 import { Color } from './entities/color.entity';
 import { Size } from './entities/size.entity';
-import { ProductImage } from './entities/image.entity';
+import { AddProductDto } from './dto/add-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -13,7 +13,7 @@ export class ProductsService {
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(Category)
-    private readonly categoryRepository: Repository<ProductEntity>,
+    private readonly categoryRepository: Repository<Category>,
     @InjectRepository(Color)
     private readonly colorRepository: Repository<Color>,
     @InjectRepository(Size)
@@ -23,6 +23,20 @@ export class ProductsService {
   async findAll() {
     return this.productRepository.find({
       relations: ['images', 'colors', 'sizes', 'categories'],
+    });
+  }
+
+  async findProduct(slug: string) {
+    return this.productRepository.findOne({
+      where: { slug: slug },
+      relations: ['images'],
+    });
+  }
+
+  async findAllFeatured() {
+    return this.productRepository.find({
+      where: { featured: true },
+      relations: ['images'],
     });
   }
 
@@ -38,7 +52,33 @@ export class ProductsService {
     return this.sizeRepository.find();
   }
 
-  async findAllProductColors() {}
+  async addProduct(addProductDto: AddProductDto) {
+    // Create a new product entity
+    const newProduct = this.productRepository.create({
+      name: addProductDto.name,
+      slug: addProductDto.name.toLowerCase().replace(/ /g, '-'),
+      description: addProductDto.description,
+      stock: addProductDto.stock,
+      price: addProductDto.price,
+      discount: addProductDto.discount,
+    });
 
-  async findAllProductSizes() {}
+    // Find or create relations
+    const category = await this.categoryRepository.findOne({
+      where: { id: addProductDto.category },
+    });
+
+    const colors = await this.colorRepository.findByIds(addProductDto.colors);
+
+    const sizes = await this.sizeRepository.findByIds(addProductDto.sizes);
+
+    newProduct.categories = [category];
+    newProduct.colors = colors;
+    newProduct.sizes = sizes;
+
+    // Guardar el nuevo producto en la base de datos
+    await this.productRepository.save(newProduct);
+
+    return newProduct;
+  }
 }
